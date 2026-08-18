@@ -1,0 +1,49 @@
+# SSH private keys
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.key
+*.pem
+*.p12
+*.pfx
+*.ppk
+
+# Credentials, tokens, env files
+.env
+.env.*
+*.env
+.netrc
+.credentials
+.aws/
+.gcloud/
+.ssh/private*
+*.token
+*.secret
+
+# Machine-specific overrides
+*_local
+*_local.*
+*.local
+*.local.*
+
+# Shell history & state
+.zsh_history
+.bash_history
+.*_history
+
+# macOS
+.DS_Store
+
+# Editors: swap / backup files
+*.swp
+*.swo
+*~
+
+# Logs / temp / build artifacts
+*.log
+*.tmp
+*.bak
+*.orig
+cache/
+tmp/
