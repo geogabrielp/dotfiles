@@ -1,0 +1,41 @@
+# ------------------------- Theme / base colors -------------------------
+
+# Main background color. Dark and soft enough to reduce eye strain.
+background = #16191D
+
+# Default foreground text color. Bright enough for readability without being harsh.
+foreground = #edf2f7
+
+# Cursor color. A warm accent to make the cursor easy to locate.
+cursor-color = #ffd166
+
+# Background color used when text is selected.
+selection-background = #2d4f73
+
+# Text color inside the selected region. Off-white helps maintain readability.
+selection-foreground = #f5f7fa
+
+# Disables Ghostty's shell integration cursor feature for a cleaner minimal look.
+shell-integration-features = no-cursor
+ 
+# ---------------------------- Color palette ----------------------------
+
+# These colors define the 16 standard terminal colors used by tools, editors,
+# and shell output. The palette is tuned to feel balanced, vibrant, and easy on the eyes.
+
+palette = 0 = #0b1220
+palette = 1 = #ff6b6b
+palette = 2 = #34d399
+palette = 3 = #fbbf24
+palette = 4 = #60a5fa
+palette = 5 = #b794f4
+palette = 6 = #22d3ee
+palette = 7 = #edf2f7
+palette = 8 = #475569
+palette = 9 = #ff8f8f
+palette = 10 = #6ee7b7
+palette = 11 = #facc5f
+palette = 12 = #a9cef8
+palette = 13 = #f38cec
+palette = 14 = #67e8f9
+palette = 15 = #f8fbff

@@ -1,0 +1,53 @@
+# Ghostty configuration (format: key = value)
+# Location: ~/.config/ghostty/config  (managed via stow)
+# Docs:  https://ghostty.org/docs/config/reference
+# Reload at runtime: cmd+shift+, (macOS) / ctrl+shift+, (Linux)
+
+# ------------------------------------ Theme ------------------------------------
+
+# Custom theme (see the `themes/` directory in this repo)
+theme = EmberSlate
+
+# ------------------------------ Window appearance ------------------------------
+
+# Enables native window decorations for a more polished desktop experience.
+window-decoration = true
+
+# Horizontal padding around the terminal content.
+window-padding-x = 12
+
+# Vertical padding around the terminal content.
+window-padding-y = 10
+
+# ------------------------------- Cursor behavior -------------------------------
+
+# Uses a hollow block cursor for a subtle, modern terminal feel.
+cursor-style = block_hollow
+
+# Keeps the cursor static without blinking, which reduces visual distraction.
+cursor-style-blink = false
+
+# -------------------------------- Font settings --------------------------------
+
+# This font is chosen for coding readability and symbol support.
+font-family = "JetBrainsMono Nerd Font"
+
+# Slightly larger font size for better clarity during extended sessions.
+font-size = 14
+
+# Bold styling keeps commands and important output visually distinct.
+font-style = Bold
+
+# ----------------------------- Input / interaction ------------------------------
+
+# Prevents automatic copying when text is selected, to keep selection behavior predictable.
+copy-on-select = false
+
+# Hides the mouse pointer while typing to keep the interface cleaner.
+mouse-hide-while-typing = true
+
+# Keeps a large scrollback buffer for long-running logs and command output.
+scrollback-limit = 50000
+
+# Enables Option as Alt for convenient keyboard navigation and shortcuts on macOS.
+macos-option-as-alt = true
