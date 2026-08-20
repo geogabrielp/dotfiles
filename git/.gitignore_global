@@ -1,0 +1,21 @@
+# ~/.gitignore_global - global ignores for ALL repos
+
+# referenced by [core] excludesfile in ~/.gitconfig
+
+# Keep this minimal!
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# editors: swap / backup files
+*.swp
+*.swo
+*~
+
+# logs / temp
+*.log
+*.tmp
+*.bak
+*.orig

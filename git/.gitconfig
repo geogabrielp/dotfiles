@@ -1,0 +1,106 @@
+# ~/.gitconfig - global git configuration
+
+# Note: 
+#   Identity (name/email) and anything personal must live in ~/.gitconfig_local 
+#   Set them WITHOUT touching this file (a stow symlink), e.g.:
+#       git config --file ~/.gitconfig_local user.name "Your Name"
+#       git config --file ~/.gitconfig_local user.email "you@example.com"
+
+# core settings
+[core]
+    editor = nano                        # your editor
+    excludesfile = ~/.gitignore_global   # global ignores (see git/.gitignore_global)
+    pager = less -FRX                    # less noise while scrolling diffs
+    autocrlf = input                     # safe on macOS/Linux/WSL
+    ignorecase = true
+
+# default branch
+[init]
+    defaultBranch = main
+
+# colors
+[color]
+    ui = auto
+
+[color "branch"]
+    current = green bold
+    local = green
+    remote = yellow
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = green
+    changed = red
+    untracked = magenta
+
+# pull / push / fetch
+[pull]
+    # true  = rebase on pull (linear history)
+    # false = merge (git's default behavior)
+    rebase = false
+
+[push]
+    default = simple
+    autoSetupRemote = true         # auto-create the remote branch on push
+
+[fetch]
+    prune = true                   # drop deleted remote refs
+    pruneTags = true
+    all = true
+
+# rebasing / conflicts
+[rebase]
+    autoStash = true               # stash dirty work before rebasing
+
+[merge]
+    conflictstyle = zdiff3         # show the base in conflicts (3-way)
+
+[rerere]
+    enabled = true                 # reuse past conflict resolutions
+
+# diff
+[diff]
+    colorMoved = zebra             # highlight moved blocks
+    algorithm = histogram          # more readable diffs
+
+[help]
+    autocorrect = prompt           # fix command typos
+
+[tag]
+    sort = version:refname         # sort tags by version
+
+# SSH by default (GitHub)
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+
+# aliases
+[alias]
+    st          = status -sb
+    co          = checkout
+    sw          = switch
+    cb          = switch -c
+    br          = branch
+    ci          = commit
+    cim         = commit -m
+    amend       = commit --amend --no-edit
+    unstage     = restore --staged
+    undo        = reset --soft HEAD~1
+    uncommit    = reset --mixed HEAD~1
+    last        = log -1 HEAD --stat
+    lg          = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    ls          = log --oneline --decorate -20
+    stat        = diff --stat
+    root        = rev-parse --show-toplevel
+    rv          = remote -v
+    sync        = pull --rebase --autostash && push
+    pf          = push --force-with-lease
+    tags        = tag -l
+
+# per-machine overrides (personal identity, etc.)
+[include]
+    path = ~/.gitconfig_local
