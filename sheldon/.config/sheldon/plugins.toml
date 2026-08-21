@@ -1,0 +1,25 @@
+# ~/.config/sheldon/plugins.toml - zsh plugins (declarative)
+
+# Useful commands:
+#   sheldon lock            # resolve and download plugins (generates plugins.lock)
+#   sheldon update          # update all plugins
+#   sheldon source          # print the code that .zshrc evals (automatic)
+#   sheldon add <name>      # add a new plugin
+
+# ORDER MATTERS: Sheldon applies plugins in the order they appear here.
+
+# target shell
+shell = "zsh"
+
+# Suggests commands as you type (right arrow → accept suggestion)
+[plugins.autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+
+# Extra completions for CLI tools (fzf, gh, lazygit, rg...).
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+apply = ["fpath"]  # add to fpath only (no sourcing)
+
+# Highlights commands as you type (loads last)
+[plugins.syntax-highlighting]
+github = "zsh-users/zsh-syntax-highlighting"
