@@ -1,0 +1,21 @@
+# ~/Casks.brewfile — GUI apps / casks (OPTIONAL)
+
+#   brew bundle --file=~/Casks.brewfile             # install the casks below
+#   brew bundle --file=~/Casks.brewfile --cleanup   # install + remove unlisted
+
+#   OPTIONAL: only run this if you want the GUI apps.
+#   On Linux (Linuxbrew/WSL) casks DON'T work - ignore this file.
+
+# GUI apps
+cask "ghostty"                   # terminal emulator
+cask "visual-studio-code"        # code editor
+cask "raycast"                   # launcher / window manager
+cask "bitwarden"                 # password manager
+cask "brave-browser"             # web browser
+cask "orbstack"                  # Docker & Linux VMs on macOS
+cask "anytype"                   # local-first notes / documents
+cask "hoppscotch"                # API testing (Postman alternative)
+cask "proton-drive"              # encrypted cloud storage
+
+# Fonts (nerd fonts for terminal icons)
+cask "font-jetbrains-mono-nerd-font"   # JetBrains Mono with icons

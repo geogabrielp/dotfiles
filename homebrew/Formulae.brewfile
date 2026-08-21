@@ -1,0 +1,42 @@
+# ~/Formulae.brewfile - CLI tools & formulae (REQUIRED)
+
+#   brew bundle --file=~/Formulae.brewfile     # install only these (CLI)
+#   brew bundle dump                           # generate a Brewfile from what's installed
+
+#   GUI apps (casks) live in ~/Casks.brewfile — OPTIONAL:
+#   brew bundle --file=~/Casks.brewfile
+
+# Essential tools
+brew "stow"                      # symlink farm manager (this repo)
+brew "git"
+brew "nano"
+brew "nanorc"                    # nano syntax/config files
+brew "jq"                        # JSON parser (used by the myip function)
+brew "tree"                      # directory tree (used by the tree alias)
+brew "wget"                      # CLI downloads (missing on macOS)
+
+# Shell
+brew "sheldon"                   # zsh plugin manager (see sheldon/plugins.toml)
+
+# TUI / productivity
+brew "lazygit"                   # git TUI (alias: lgit)
+brew "lazydocker"                # docker TUI (alias: ldocker)
+brew "htop"                      # process / CPU / RAM monitor
+brew "fastfetch"                 # system info at login
+
+# Modern CLI
+brew "eza"                       # modern ls (icons/colors)
+brew "bat"                       # cat with syntax highlighting
+brew "fzf"                       # fuzzy finder (Ctrl+R, Ctrl+T, Alt+C)
+brew "fd"                        # fast modern find (alias: f)
+brew "ripgrep"                   # fast grep (rg)
+brew "zoxide"                    # smart cd (alias: z)
+brew "gh"                        # GitHub CLI (PRs, repos, auth)
+brew "git-delta"                 # pretty diffs (git pager + lazygit)
+brew "tldr"                      # community man pages with examples
+
+# Data & AI
+brew "uv"                        # Python manager (python, venv, deps)
+brew "duckdb"                    # local SQL analytics (Parquet/CSV)
+brew "yq"                        # YAML processor (companion to jq)
+brew "pre-commit"                # git hooks framework (Python projects)
