@@ -31,3 +31,10 @@ if command -v bat >/dev/null 2>&1; then
     alias catp='bat --plain'                            # plain cat (no highlighting)
     export MANPAGER="sh -c 'col -bx | bat -l man -p'"   # colored man pages
 fi
+
+# lazygit (git TUI) - point it at the stowed config file.
+# macOS default config dir is ~/Library/Application Support/lazygit (not
+# ~/.config), so LG_CONFIG_FILE overrides it. On Linux this is a no-op.
+if command -v lazygit >/dev/null 2>&1; then
+    export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
+fi

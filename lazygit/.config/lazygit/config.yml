@@ -1,0 +1,14 @@
+# ~/.config/lazygit/config.yml - lazygit configuration (managed via stow)
+#
+# Use git-delta as the diff renderer.
+# NOTE: on macOS lazygit reads config from ~/Library/Application Support/lazygit,
+# so we point it here via LG_CONFIG_FILE (see zsh 55-integrations.zsh).
+# On Linux this path IS the default, so the env var is a no-op.
+# See: https://github.com/jesseduffield/lazygit/blob/master/docs/Custom_DiffRenderers.md
+
+git:
+  diffRenderers:
+    - name: "delta"
+      type: "stdinFilter"
+      colorArg: "always"
+      command: "delta --paging=never --line-numbers"

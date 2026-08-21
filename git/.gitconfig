@@ -10,7 +10,7 @@
 [core]
     editor = nano                        # your editor
     excludesfile = ~/.gitignore_global   # global ignores (see git/.gitignore_global)
-    pager = less -FRX                    # less noise while scrolling diffs
+    pager = delta                        # pretty diffs (git-delta)
     autocrlf = input                     # safe on macOS/Linux/WSL
     ignorecase = true
 
@@ -67,6 +67,16 @@
 [diff]
     colorMoved = zebra             # highlight moved blocks
     algorithm = histogram          # more readable diffs
+
+# git-delta (pretty diffs)
+[interactive]
+    diffFilter = delta --color-only     # colorize git add -p
+
+[delta]
+    navigate = true                     # jump between hunks with n/N
+    side-by-side = false                # split view
+    line-numbers = true
+    syntax-theme = Catppuccin Mocha     # matches bat theme
 
 [help]
     autocorrect = prompt           # fix command typos
