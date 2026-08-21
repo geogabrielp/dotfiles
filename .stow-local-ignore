@@ -1,0 +1,30 @@
+# .stow-local-ignore - GNU Stow ignore list
+
+# One Perl regexp per line, matched against the path RELATIVE TO EACH PACKAGE.
+# Blank lines and lines starting with '#' are comments.
+# Any file/dir matching a pattern will NOT be symlinked into $HOME.
+
+# NOTE: this file does NOT select which top-level dirs are packages -
+# that is decided by PACKAGES in the Makefile.
+
+# Repo / VCS metadata (never symlink these)
+^\.git$
+^\.github$
+^\.gitignore$
+^\.gitmodules$
+
+# Package-internal docs that shouldn't be linked into $HOME
+^README\.md$
+^README$
+^LICENSE$
+^CHANGELOG\.md$
+^Makefile$
+
+# Editor / macOS junk
+\.DS_Store$
+\.swp$
+\.swo$
+~$
+
+# This file itself (stow already skips it, but explicit is safer)
+^\.stow-local-ignore$
