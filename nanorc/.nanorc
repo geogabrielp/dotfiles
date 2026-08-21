@@ -1,0 +1,34 @@
+# ~/.nanorc - GNU nano configuration
+
+# Behavior
+set tabsize 4                           # tab width = 4 columns
+set tabstospaces                        # expand Tab into spaces
+set autoindent                          # keep indentation on new lines
+set linenumbers                         # show line numbers in the gutter
+set mouse                               # enable mouse support (click/scroll)
+set softwrap                            # soft-wrap long lines at the screen edge
+set constantshow                        # show cursor pos (line/col/%) in the status bar
+set historylog                          # remember search/replace history across sessions
+set multibuffer                         # open files in separate buffers (no data loss)
+set trimblanks                          # trim trailing whitespace on wrapped lines
+
+# Appearance (requires nano >= 5.0)
+set titlecolor white                    # top title-bar text color
+set statuscolor black,green             # status bar colors
+set selectedcolor white,gray            # marked/selected text colors
+set numbercolor gray                    # line-number gutter color
+set keycolor white                      # shortcut-key labels in the help/status bars
+set functioncolor gray                  # function names in the help lines
+
+# Syntax highlighting (cross-platform)
+# Note: Uncomment the appropriate line for your system (macOS, Linux/WSL2, etc.)
+
+# macOS (Homebrew):
+include "/opt/homebrew/Cellar/nano/*/share/nano/*.nanorc"       # Apple Silicon
+# include "/usr/local/share/nano/*.nanorc"                      # Intel
+
+# Linux (Homebrew / Linuxbrew):
+# include "/home/linuxbrew/.linuxbrew/share/nano/*.nanorc"
+
+# Linux (distro packages: apt/dnf/pacman/apk - also macOS system nano):
+# include "/usr/share/nano/*.nanorc"
