@@ -3,9 +3,10 @@
 # bootstrap.sh - Bootstrap a fresh machine from my dotfiles repo
 
 #   1. Install dependencies   git · zsh · Homebrew (skipped if present)
-#   2. Clone the repo         → $DOTFILES_DIR
+#   2. Clone the repo         → $DOTFILES_DIR (HTTPS by default, no keys needed)
 #   3. Install CLI tools      brew bundle (Formulae.brewfile)
 #   4. Link dotfiles          make install (GNU Stow)
+#   5. Create *_local files   ~/.gitconfig_local · ~/.zshrc_local · ~/.zprofile_local
 
 # Idempotent - safe to re-run as many times as you like.
 
@@ -15,17 +16,17 @@
 set -euo pipefail
 
 # Configuration
-REPO_URL="${DOTFILES_REPO_URL:-git@github.com:geogabrielp/dotfiles.git}"
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
+REPO_URL="${DOTFILES_REPO_URL:-https://github.com/geogabrielp/dotfiles.git}"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 
 # Colors (auto-disabled when not a TTY; force off with NO_COLOR=1)
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
   readonly C_RESET=$'\033[0m'   C_BOLD=$'\033[1m'   C_DIM=$'\033[2m'
   readonly C_RED=$'\033[31m'    C_GREEN=$'\033[32m' C_YELLOW=$'\033[33m'
-  readonly C_BLUE=$'\033[34m'   C_MAGENTA=$'\033[35m' C_CYAN=$'\033[36m'
+  readonly C_MAGENTA=$'\033[35m' C_CYAN=$'\033[36m'
 else
-  readonly C_RESET= C_BOLD= C_DIM=
-  readonly C_RED= C_GREEN= C_YELLOW= C_BLUE= C_MAGENTA= C_CYAN=
+  readonly C_RESET='' C_BOLD='' C_DIM=''
+  readonly C_RED='' C_GREEN='' C_YELLOW='' C_MAGENTA='' C_CYAN=''
 fi
 
 # Logging helpers
@@ -197,7 +198,7 @@ clone_repo() {
   else
     info "Cloning $REPO_URL → $DOTFILES_DIR"
     git clone "$REPO_URL" "$DOTFILES_DIR" \
-      || die "Clone failed. Check the URL / SSH key, or set DOTFILES_REPO_URL."
+      || die "Clone failed. Check the URL / network, or set DOTFILES_REPO_URL."
     ok "Repository cloned."
   fi
 }
@@ -233,6 +234,62 @@ sheldon_lock() {
   ok "Sheldon plugins resolved."
 }
 
+# Create machine-local config files with boilerplate.
+# Idempotent: only creates files that don't exist yet - NEVER overwrites.
+ensure_local_configs() {
+  section "Local configs (*_local)"
+
+  # ~/.gitconfig_local
+  if [ -f "$HOME/.gitconfig_local" ]; then
+    ok "$HOME/.gitconfig_local already exists"
+  else
+    info "Creating ~/.gitconfig_local (set your identity)..."
+    cat > "$HOME/.gitconfig_local" <<'EOF'
+# ~/.gitconfig_local - machine-specific git config (NEVER commit this file)
+# Set your identity once per machine:
+#   git config --file ~/.gitconfig_local user.name "Your Name"
+#   git config --file ~/.gitconfig_local user.email "you@example.com"
+#
+# Personal tweaks that should NOT be shared across machines go here.
+#   [core]
+#       sshCommand = ssh -F ~/.ssh/config-work   # only if you use custom SSH
+EOF
+    ok "Created ~/.gitconfig_local"
+  fi
+
+  # ~/.zshrc_local
+  if [ -f "$HOME/.zshrc_local" ]; then
+    ok "$HOME/.zshrc_local already exists"
+  else
+    info "Creating ~/.zshrc_local..."
+    cat > "$HOME/.zshrc_local" <<'EOF'
+# ~/.zshrc_local - machine-specific zsh config (NEVER commit this file)
+# Sourced automatically at the end of ~/.zshrc.
+# Examples:
+#   export PROJECTS_DIR="$HOME/Work"
+#   alias work="cd $PROJECTS_DIR"
+#   # add machine-specific PATHs, secrets, tool init, etc.
+EOF
+    ok "Created ~/.zshrc_local"
+  fi
+
+  # ~/.zprofile_local
+  if [ -f "$HOME/.zprofile_local" ]; then
+    ok "$HOME/.zprofile_local already exists"
+  else
+    info "Creating ~/.zprofile_local..."
+    cat > "$HOME/.zprofile_local" <<'EOF'
+# ~/.zprofile_local - machine-specific login env (NEVER commit this file)
+# Sourced automatically at the end of ~/.zprofile (login shells).
+# Examples:
+#   # OrbStack
+#   # [ -f ~/.orbstack/... ] && ...
+#   export SOME_LOGIN_ONLY_VAR="value"
+EOF
+    ok "Created ~/.zprofile_local"
+  fi
+}
+
 # Main
 main() {
   OS="$(detect_os)"
@@ -246,15 +303,21 @@ main() {
   clone_repo
   install_formulae
   link_dotfiles
+  ensure_local_configs
   sheldon_lock
 
   section "Done"
   ok "Bootstrap finished. Your dotfiles are installed and linked."
-  info "Reload your shell: ${C_BOLD}exec $SHELL${C_RESET}"
-  info "Manage packages:   cd $DOTFILES_DIR && make help"
-  if [ "$OS" = macos ] && [ -f "$DOTFILES_DIR/homebrew/Casks.brewfile" ]; then
-    info "Optional GUI apps: brew bundle --file=~/Casks.brewfile (macOS only)"
-  fi
+
+  section "Next steps"
+  info "${C_BOLD}1.${C_RESET} Reload your shell:         ${C_YELLOW}exec $SHELL${C_RESET}"
+  info "${C_BOLD}2.${C_RESET} Authenticate with GitHub:  ${C_YELLOW}gh auth login && gh auth setup-git${C_RESET}"
+  info "${C_BOLD}3.${C_RESET} Set your git name:         ${C_YELLOW}git config --file ~/.gitconfig_local user.name \"Your Name\"${C_RESET}"
+  info "${C_BOLD}3.${C_RESET} Set your git email:        ${C_YELLOW}git config --file ~/.gitconfig_local user.email \"you@example.com\"${C_RESET}"
+  info "${C_BOLD}4.${C_RESET} Verify git config:         ${C_YELLOW}gh auth status${C_RESET} or ${C_YELLOW}git config user.name${C_RESET}"
+  info "${C_BOLD}5.${C_RESET} Make zsh your shell:       ${C_YELLOW}chsh -s \"$(command -v zsh)\"${C_RESET}"
+  info "${C_BOLD}6.${C_RESET} GUI apps (macOS only):     ${C_YELLOW}brew bundle --file=~/Casks.brewfile${C_RESET}"
+  info "${C_BOLD}7.${C_RESET} Manage packages/dotfiles:  ${C_YELLOW}cd $DOTFILES_DIR && make help${C_RESET}"
 }
 
 main "$@"
