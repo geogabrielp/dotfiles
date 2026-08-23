@@ -84,10 +84,6 @@
 [tag]
     sort = version:refname         # sort tags by version
 
-# SSH by default (GitHub)
-[url "git@github.com:"]
-    insteadOf = https://github.com/
-
 # aliases
 [alias]
     st          = status -sb
