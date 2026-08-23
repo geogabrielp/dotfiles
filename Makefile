@@ -19,20 +19,21 @@ TARGET ?= $(HOME)
 # One top-level folder per package. Add a new package here when you
 # create a new dotfiles folder.
 # Infra dirs (docs/, bin/, .github/ are intentionally NOT packages.
-PACKAGES := eza ghostty git homebrew lazygit nanorc sheldon ssh zprofile zsh
+PACKAGES := eza ghostty git homebrew lazygit nanorc sheldon zprofile zsh
 
 # Targets
-.PHONY: help install unstow refresh adopt check
+.PHONY: help install unstow refresh adopt check print-packages
 .DEFAULT_GOAL := help
 
 # help: list available targets
 help:
 	@echo "Available targets:"
-	@echo "  make install   -> stow all packages: $(PACKAGES)"
-	@echo "  make unstow    -> remove all symlinks"
-	@echo "  make refresh   -> unstow + stow (rebuild symlinks)"
-	@echo "  make adopt     -> adopt existing ~ files (CAREFUL!)"
-	@echo "  make check     -> dry-run (creates nothing)"
+	@echo "  make install      -> stow all packages: $(PACKAGES)"
+	@echo "  make unstow       -> remove all symlinks"
+	@echo "  make refresh      -> unstow + stow (rebuild symlinks)"
+	@echo "  make adopt        -> adopt existing ~ files (CAREFUL!)"
+	@echo "  make check        -> dry-run (creates nothing)"
+	@echo "  make print-packages -> list packages (one per line, used by CI)"
 
 # install: stow all packages (idempotent)
 install:
@@ -74,3 +75,7 @@ check:
 		$(STOW) --target="$(TARGET)" --simulate --verbose $$pkg || exit 1; \
 	done
 	@echo "✅ All packages valid"
+
+# print-packages: print the package list, one per line - used by CI
+print-packages:
+	@printf '%s\n' $(PACKAGES)
