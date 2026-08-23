@@ -1,0 +1,91 @@
+# stow-check.yml - Validates the dotfiles repo in CI
+
+# On every push/PR, clones the repo into a TEMPORARY home and runs
+# "stow" on all packages, on Ubuntu and macOS.
+
+# If any package is broken (wrong structure, missing files, etc.),
+# CI fails - before it can break my real machine.
+
+name: stow-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  stow:
+    name: stow (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install stow
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            brew install stow
+          else
+            sudo apt-get update -y
+            sudo apt-get install -y stow
+          fi
+
+      - name: Validate repo in a temporary home
+        run: |
+          set -euo pipefail
+          FAKE_HOME="$RUNNER_TEMP/fake-home"
+          mkdir -p "$FAKE_HOME"
+
+          # Single source of truth: the PACKAGES list in the Makefile.
+          # CI always tests exactly what 'make install' would install,
+          # and infra dirs are never stowed by accident.
+          packages=()
+          while IFS= read -r pkg; do
+            packages+=("$pkg")
+          done < <(make -s print-packages)
+          if [ "${#packages[@]}" -eq 0 ]; then
+            echo "::error::No packages found in Makefile (PACKAGES empty)."
+            exit 1
+          fi
+
+          echo "Packages found:"
+          printf '  • %s\n' "${packages[@]}"
+
+          fail=0
+          for pkg in "${packages[@]}"; do
+            echo "→ stow $pkg"
+            stow --target="$FAKE_HOME" --verbose "$pkg" || fail=1
+          done
+
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::One or more packages failed stow."
+            exit 1
+          fi
+          echo "✅ All packages stowed successfully in $FAKE_HOME"
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y shellcheck
+
+      - name: Lint bash scripts
+        run: |
+          scripts=$(find bin -maxdepth 1 -name '*.sh' -print)
+          if [ -z "$scripts" ]; then
+            echo "No shell scripts found - skipping."
+            exit 0
+          fi
+          shellcheck $scripts
