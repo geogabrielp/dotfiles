@@ -5,7 +5,7 @@
 
   <!-- Badges status -->
   [![badge](https://shieldcn.dev/github/geogabrielp/dotfiles/ci.svg?size=xs&theme=zinc&split=true&statusDot=true)](https://github.com/geogabrielp/dotfiles/actions)
-  [![badge](https://shieldcn.dev/github/vercel/next.js/license.svg?size=xs&split=true)](https://github.com/geogabrielp/dotfiles/blob/main/LICENSE)
+  [![badge](https://shieldcn.dev/github/geogabrielp/dotfiles/license.svg?size=xs&split=true)](https://github.com/geogabrielp/dotfiles/blob/main/LICENSE)
   ![badge](https://shieldcn.dev/badge/macOS.svg?size=xs&theme=zinc&split=true&logo=apple)
   ![badge](https://shieldcn.dev/badge/Linux.svg?size=xs&theme=zinc&split=true&logo=linux)
 
