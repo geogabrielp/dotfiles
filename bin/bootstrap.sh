@@ -310,14 +310,14 @@ main() {
   ok "Bootstrap finished. Your dotfiles are installed and linked."
 
   section "Next steps"
-  info "${C_BOLD}1.${C_RESET} Reload your shell:         ${C_YELLOW}exec $SHELL${C_RESET}"
-  info "${C_BOLD}2.${C_RESET} Authenticate with GitHub:  ${C_YELLOW}gh auth login && gh auth setup-git${C_RESET}"
-  info "${C_BOLD}3.${C_RESET} Set your git name:         ${C_YELLOW}git config --file ~/.gitconfig_local user.name \"Your Name\"${C_RESET}"
-  info "${C_BOLD}3.${C_RESET} Set your git email:        ${C_YELLOW}git config --file ~/.gitconfig_local user.email \"you@example.com\"${C_RESET}"
-  info "${C_BOLD}4.${C_RESET} Verify git config:         ${C_YELLOW}gh auth status${C_RESET} or ${C_YELLOW}git config user.name${C_RESET}"
-  info "${C_BOLD}5.${C_RESET} Make zsh your shell:       ${C_YELLOW}chsh -s \"$(command -v zsh)\"${C_RESET}"
-  info "${C_BOLD}6.${C_RESET} GUI apps (macOS only):     ${C_YELLOW}brew bundle --file=~/Casks.brewfile${C_RESET}"
-  info "${C_BOLD}7.${C_RESET} Manage packages/dotfiles:  ${C_YELLOW}cd $DOTFILES_DIR && make help${C_RESET}"
+  info "${C_BOLD}1.${C_RESET} Make zsh your shell:       ${C_YELLOW}chsh -s \"$(command -v zsh)\"${C_RESET}"
+  info "${C_BOLD}2.${C_RESET} Reload your shell:         ${C_YELLOW}exec $SHELL${C_RESET}"
+  info "${C_BOLD}3.${C_RESET} Authenticate with GitHub:  ${C_YELLOW}gh auth login${C_RESET} (credential helper is already in the gitconfig)"
+  info "${C_BOLD}4.${C_RESET} Set your git name:         ${C_YELLOW}git config --file ~/.gitconfig_local user.name \"Your Name\"${C_RESET}"
+  info "${C_BOLD}5.${C_RESET} Set your git email:        ${C_YELLOW}git config --file ~/.gitconfig_local user.email \"you@example.com\"${C_RESET}"
+  info "${C_BOLD}6.${C_RESET} Verify git config:         ${C_YELLOW}gh auth status${C_RESET} or ${C_YELLOW}git config user.name${C_RESET}"
+  info "${C_BOLD}7.${C_RESET} GUI apps (macOS only):     ${C_YELLOW}brew bundle --file=~/Casks.brewfile${C_RESET}"
+  info "${C_BOLD}8.${C_RESET} Manage packages/dotfiles:  ${C_YELLOW}cd $DOTFILES_DIR && make help${C_RESET}"
 }
 
 main "$@"

@@ -46,27 +46,35 @@
 
 [push]
     default = simple
-    autoSetupRemote = true         # auto-create the remote branch on push
+    autoSetupRemote = true              # auto-create the remote branch on push
 
 [fetch]
-    prune = true                   # drop deleted remote refs
+    prune = true                        # drop deleted remote refs
     pruneTags = true
     all = true
 
+# GitHub credentials (HTTPS) use gh as credential helper
+# gh auth login > authenticate once (browser/token)
+[credential "https://github.com"]
+    helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+    helper = !gh auth git-credential
+
 # rebasing / conflicts
 [rebase]
-    autoStash = true               # stash dirty work before rebasing
+    autoStash = true                    # stash dirty work before rebasing
 
 [merge]
-    conflictstyle = zdiff3         # show the base in conflicts (3-way)
+    conflictstyle = zdiff3              # show the base in conflicts (3-way)
 
 [rerere]
-    enabled = true                 # reuse past conflict resolutions
+    enabled = true                      # reuse past conflict resolutions
 
 # diff
 [diff]
-    colorMoved = zebra             # highlight moved blocks
-    algorithm = histogram          # more readable diffs
+    colorMoved = zebra                  # highlight moved blocks
+    algorithm = histogram               # more readable diffs
 
 # git-delta (pretty diffs)
 [interactive]
@@ -79,10 +87,10 @@
     syntax-theme = Catppuccin Mocha     # matches bat theme
 
 [help]
-    autocorrect = prompt           # fix command typos
+    autocorrect = prompt                # fix command typos
 
 [tag]
-    sort = version:refname         # sort tags by version
+    sort = version:refname              # sort tags by version
 
 # aliases
 [alias]
