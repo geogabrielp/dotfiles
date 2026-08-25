@@ -1,5 +1,36 @@
 # ~/.zshrc.d/60-functions.zsh — utility functions
 
+# Update Homebrew: formulae, casks (incl. auto-update) and cleanup
+brewup() {
+    command -v brew >/dev/null || { echo "brewup: brew not installed" >&2; return 1; }
+    brew update && \
+    brew upgrade && \
+    brew upgrade --cask --greedy && \
+    brew cleanup --prune=all
+}
+
+# Clean & optimize the system
+#   macOS: Mole (`mo clean` + `mo optimize`) - safe, has dry-run/whitelist
+#   Linux: native cleanup (apt + linuxbrew + docker)
+sysoptimize() {
+    if [[ "$(uname)" == "Darwin" ]]; then
+        if command -v mo >/dev/null 2>&1; then
+            mo clean && mo optimize
+        else
+            echo "sysoptimize: Mole ('mo') not installed -> brew install mole" >&2
+            return 1
+        fi
+    else
+        if command -v apt-get >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get autoremove -y
+            sudo apt-get autoclean
+        fi
+        command -v brew >/dev/null 2>&1 && brew cleanup --prune=all
+        command -v docker >/dev/null 2>&1 && docker system prune -f
+    fi
+}
+
 # Create a directory and cd into it: take my_project
 take() { mkdir -p "$1" && cd "$1"; }
 

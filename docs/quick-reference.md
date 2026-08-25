@@ -48,6 +48,8 @@ After editing the file: `sheldon lock && exec $SHELL`.
 | `lgit` | lazygit |
 | `ldocker` | lazydocker |
 | `take()` | `mkdir` + `cd` |
+| `brewup` | update Homebrew: formulae + casks (`--greedy`) + cleanup |
+| `sysoptimize` | clean/optimize: Mole (macOS) or apt/brew/docker (Linux) |
 
 **Per-machine:** `~/.zshrc_local` (auto-sourced last).
 
@@ -100,6 +102,8 @@ ssh -T git@github.com
 | `brew bundle --file ~/Formulae.brewfile` | install CLI tools/formulae (required) |
 | `brew bundle --file=~/Casks.brewfile` | install GUI apps/casks (optional) |
 | `brew bundle cleanup` | remove anything not listed |
+
+> Platform-conditional formulae: `mole` (macOS), `htop`/`ncdu` (Linux).
 
 ## 🔗 Stow
 

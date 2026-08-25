@@ -38,3 +38,8 @@ fi
 if command -v lazygit >/dev/null 2>&1; then
     export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
 fi
+
+# mole (macOS cleaner/optimizer) - tab completion (binary is `mo`)
+if command -v mo >/dev/null 2>&1; then
+    eval "$(mo completion zsh)"
+fi

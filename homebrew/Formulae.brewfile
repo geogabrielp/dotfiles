@@ -21,8 +21,12 @@ brew "sheldon"                   # zsh plugin manager (see sheldon/plugins.toml)
 # TUI / productivity
 brew "lazygit"                   # git TUI (alias: lgit)
 brew "lazydocker"                # docker TUI (alias: ldocker)
-brew "htop"                      # process / CPU / RAM monitor
+brew "htop" if OS.linux?         # process / CPU / RAM monitor (Linux only)
+brew "ncdu" if OS.linux?         # disk usage explorer (Linux only)
 brew "fastfetch"                 # system info at login
+
+# System maintenance
+brew "mole" if OS.mac?           # cleaner/optimizer (macOS only; used by sysoptimize)
 
 # Modern CLI
 brew "eza"                       # modern ls (icons/colors)
