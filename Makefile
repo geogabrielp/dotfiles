@@ -18,11 +18,11 @@ TARGET ?= $(HOME)
 # Packages
 # One top-level folder per package. Add a new package here when you
 # create a new dotfiles folder.
-# Infra dirs (docs/, bin/, .github/ are intentionally NOT packages.
+# Infra dirs (bin/, docs/, macos/, .github/ are intentionally NOT packages.
 PACKAGES := eza ghostty git homebrew lazygit nanorc sheldon zprofile zsh
 
 # Targets
-.PHONY: help install unstow refresh adopt check print-packages
+.PHONY: help install unstow refresh adopt check macos print-packages
 .DEFAULT_GOAL := help
 
 # help: list available targets
@@ -33,6 +33,7 @@ help:
 	@echo "  make refresh      -> unstow + stow (rebuild symlinks)"
 	@echo "  make adopt        -> adopt existing ~ files (CAREFUL!)"
 	@echo "  make check        -> dry-run (creates nothing)"
+	@echo "  make macos        -> apply macOS defaults (Finder, Dock, ...)"
 	@echo "  make print-packages -> list packages (one per line, used by CI)"
 
 # install: stow all packages (idempotent)
@@ -79,3 +80,8 @@ check:
 # print-packages: print the package list, one per line - used by CI
 print-packages:
 	@printf '%s\n' $(PACKAGES)
+
+# macos: apply macOS system defaults (Finder, Dock, Trackpad, ...)
+# Idempotent; macOS only (the script itself guards on Darwin and no-ops elsewhere).
+macos:
+	@bash macos/bin/set-defaults.sh

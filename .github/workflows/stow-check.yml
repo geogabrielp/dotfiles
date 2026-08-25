@@ -83,7 +83,7 @@ jobs:
 
       - name: Lint bash scripts
         run: |
-          scripts=$(find bin -maxdepth 1 -name '*.sh' -print)
+          scripts=$(find bin macos -maxdepth 2 -name '*.sh' -print 2>/dev/null)
           if [ -z "$scripts" ]; then
             echo "No shell scripts found - skipping."
             exit 0

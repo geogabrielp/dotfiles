@@ -113,6 +113,15 @@ ssh -T git@github.com
 
 Useful flags: `--dotfiles` (`dot-*` → `.*`), `--no-folding`, `--ignore`.
 
+## 🍎 macOS
+
+| Command | What it does |
+| --- | --- |
+| `make macos` | apply macOS defaults (idempotent, macOS only) |
+| `macos/bin/set-defaults.sh` | same, run directly from the repo |
+
+Edits live in `macos/bin/set-defaults.sh` (infra like `bin/`, **not stowed**):
+
 ## 📄 Per-machine overrides
 
 The `*_local` files hold machine-specific stuff — the bootstrap creates them

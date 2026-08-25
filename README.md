@@ -143,6 +143,24 @@ ls -la ~/.zshrc ~/.gitconfig
 
 > **Already have configs?** See `make adopt`.
 
+### 🍎 macOS system defaults (Finder, Dock, Trackpad, ...)
+
+Applies my preferred macOS defaults, safe to re-run anytime:
+
+```bash
+make macos
+```
+
+Configures:
+
+- **Finder** (hidden files, extensions, path/status bar, folders on
+top)
+- **Dock** (autohide, no recents, etc.), tap-to-click, fast key
+repeat, screenshot location/format, and expanded save/print panels.
+
+> Lives in [`macos/bin/set-defaults.sh`](macos/bin/set-defaults.sh),
+> **not a stow package**. Edit it to tweak. macOS only, no-op on Linux/WSL.
+
 ---
 
 ## 📦 What's included
