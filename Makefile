@@ -19,10 +19,14 @@ TARGET ?= $(HOME)
 # One top-level folder per package. Add a new package here when you
 # create a new dotfiles folder.
 # Infra dirs (bin/, docs/, macos/, .github/ are intentionally NOT packages.
-PACKAGES := eza ghostty git homebrew lazygit nanorc sheldon zprofile zsh
+
+# claude is special: it needs claude-prep before stowing and claude-settings
+# after (settings.json is copied, not symlinked). See those targets below.
+PACKAGES := claude eza ghostty git homebrew lazygit nanorc sheldon zprofile zsh
 
 # Targets
-.PHONY: help install unstow refresh adopt check macos print-packages
+.PHONY: help install unstow refresh adopt check macos print-packages \
+        claude-prep claude-settings
 .DEFAULT_GOAL := help
 
 # help: list available targets
@@ -35,15 +39,40 @@ help:
 	@echo "  make check        -> dry-run (creates nothing)"
 	@echo "  make macos        -> apply macOS defaults (Finder, Dock, ...)"
 	@echo "  make print-packages -> list packages (one per line, used by CI)"
+	@echo "  make claude-prep  -> create real ~/.claude dirs (run by install)"
+	@echo "  make claude-settings -> merge settings.json (run by install)"
 
 # install: stow all packages (idempotent)
-install:
+install: claude-prep
 	@test -n "$(PACKAGES)" || { echo "No packages found."; exit 1; }
 	@for pkg in $(PACKAGES); do \
 		echo "→ stow $$pkg"; \
 		$(STOW) --target="$(TARGET)" --verbose $$pkg || exit 1; \
 	done
+	@$(MAKE) --no-print-directory claude-settings
 	@echo "✅ Packages installed in $(TARGET)"
+
+# claude-prep: create the ~/.claude subdirectories as REAL directories before
+# stow runs.
+claude-prep:
+	@mkdir -p "$(TARGET)/.claude/skills" "$(TARGET)/.claude/rules" \
+		"$(TARGET)/.claude/themes"
+
+# The jq merge makes the repo the source of truth, the repo wins on every key
+# it defines, while keeping keys that exist only in the live file. Put a
+# machine-local choice in the live file only; never define it here.
+claude-settings:
+	@live="$(TARGET)/.claude/settings.json"; \
+	if [ -f "$$live" ]; then \
+		tmp=$$(mktemp); \
+		jq -s '.[1] * .[0]' claude/.claude/settings.json "$$live" > "$$tmp" || { rm -f "$$tmp"; exit 1; }; \
+		install -m 600 "$$tmp" "$$live"; \
+		rm -f "$$tmp"; \
+		echo "→ merged settings.json → $$live (repo wins, local-only keys kept)"; \
+	else \
+		install -m 600 claude/.claude/settings.json "$$live"; \
+		echo "→ installed settings.json → $$live"; \
+	fi
 
 # unstow: remove all packages
 unstow:

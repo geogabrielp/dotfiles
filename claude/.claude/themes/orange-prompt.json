@@ -1,0 +1,8 @@
+{
+  "name": "Orange Prompt",
+  "base": "dark",
+  "overrides": {
+    "promptBorder": "rgb(255,135,0)",
+    "promptBorderShimmer": "rgb(255,180,90)"
+  }
+}

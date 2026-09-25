@@ -1,0 +1,5 @@
+# Files listed here are NOT symlinked into ~/.claude/.
+# settings.json is copied by `make claude-settings` instead, because Claude
+# Code saves it atomically (write .tmp.<pid> + rename). That rename replaces a
+# symlink with a regular file, silently detaching it from this repo.
+\.claude/settings\.json

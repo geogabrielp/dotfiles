@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
+  "statusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/statusline.py"
+  },
+
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80"
+  },
+
+  "permissions": {
+    "deny": [
+      "Bash(sudo *)",
+      "Read(.env)",
+      "Read(secrets/**)",
+      "Read(**/*.pem)",
+      "Read(~/.ssh/id_*)",
+      "Read(~/.claude/settings.local.json)",
+      "Read(~/.aws/credentials)"
+    ]
+  },
+
+  "syntaxHighlightingDisabled": false,
+  "theme": "custom:orange-prompt",
+  "spinnerVerbs": {
+    "mode": "append",
+    "verbs": [
+      "Pretending to think",
+      "Confidently guessing",
+      "Apologizing in advance",
+      "Hallucinating politely",
+      "Blaming the cache",
+      "Recalling things incorrectly",
+      "Ignoring the docs",
+      "Winging it professionally",
+      "Overthinking a one-liner",
+      "Reading half the file",
+      "Naming variables poorly",
+      "Fixing it in post",
+      "Shipping it anyway",
+      "Asking for forgiveness",
+      "Doing math in my head",
+      "Trusting my memory"
+    ]
+  }
+}
