@@ -47,3 +47,5 @@ id_ed25519
 *.orig
 cache/
 tmp/
+__pycache__/
+*.pyc

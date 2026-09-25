@@ -27,8 +27,11 @@ fi
 
 # bat (modern cat)
 if command -v bat >/dev/null 2>&1; then
-    alias cat='bat'                                     # cat with syntax highlighting
-    alias catp='bat --plain'                            # plain cat (no highlighting)
+    # --paging=never: bat pages when stdout is a TTY, which hangs anything that
+    # shells out and waits for output (scripts, editor tasks, AI agents). Use
+    # `less` when you actually want to scroll.
+    alias cat='bat --paging=never'                      # cat with syntax highlighting
+    alias catp='bat --paging=never --plain'             # plain cat (no highlighting)
     export MANPAGER="sh -c 'col -bx | bat -l man -p'"   # colored man pages
 fi
 
