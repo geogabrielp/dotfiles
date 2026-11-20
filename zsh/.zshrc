@@ -19,9 +19,10 @@ setopt EXTENDED_GLOB
 zmodload zsh/datetime
 typeset -gF _zsh_start_epoch=$EPOCHREALTIME
 
-for _f in "$HOME/.zshrc.d/"*.zsh(N); do
-    source "$_f"
+for _dotfiles_module in "$HOME/.zshrc.d/"*.zsh(N); do
+    source "$_dotfiles_module"
 done
+unset _dotfiles_module
 
 # Machine-local overrides
 [[ -f "$HOME/.zshrc_local" ]] && source "$HOME/.zshrc_local"

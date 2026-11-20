@@ -1,88 +1,108 @@
 # dotfiles - Makefile (idempotent dotfiles management)
-
-# Usage:
-#   make help      list available targets
-#   make install   stow all packages (idempotent)
-#   make unstow    remove all packages
-#   make refresh   unstow + stow (rebuild all symlinks)
-#   make adopt     adopt existing ~ files into the repo (CAREFUL!)
-#   make check     dry-run: validate all packages
-
-# Requirements: GNU Stow (see README.md to install)
+#
+# Requirements: GNU Stow (see README.md)
+# Usage: make help
 
 # Configuration
 SHELL  := /bin/bash
 STOW   ?= stow
 TARGET ?= $(HOME)
 
-# Packages
-# One top-level folder per package. Add a new package here when you
-# create a new dotfiles folder.
-# Infra dirs (bin/, docs/, macos/, .github/ are intentionally NOT packages.
+# Packages: one top-level folder per package, except the infra dirs below.
+# Derived from the filesystem, so a new folder is stowed automatically.
+INFRA := bin docs macos .github
+PACKAGES := $(filter-out $(INFRA),$(patsubst %/,%,$(dir $(wildcard */))))
 
-PACKAGES := eza ghostty git homebrew lazygit nanorc sheldon zprofile zsh
+# Junk stow would otherwise link (it only ignores VCS files and package docs by
+# default). These flags add to that built-in list; a .stow-local-ignore file
+# would replace it, which is why the patterns live here instead.
+# No trailing `$`: make would eat the `$'` pair, and a literal `$` needs `$$`.
+# `--ignore` is unanchored anyway, so the anchor buys nothing.
+STOW_IGNORE := --ignore='(^|/)\.DS_Store' --ignore='\.swp' \
+               --ignore='\.swo' --ignore='(^|/)Makefile'
 
-# Targets
-.PHONY: help install unstow refresh adopt check macos print-packages
+.PHONY: help install unstow refresh adopt check macos print-packages \
+        print-stow-ignore lint check-brewfile check-home
 .DEFAULT_GOAL := help
 
-# help: list available targets
-help:
-	@echo "Available targets:"
-	@echo "  make install      -> stow all packages: $(PACKAGES)"
-	@echo "  make unstow       -> remove all symlinks"
-	@echo "  make refresh      -> unstow + stow (rebuild symlinks)"
-	@echo "  make adopt        -> adopt existing ~ files (CAREFUL!)"
-	@echo "  make check        -> dry-run (creates nothing)"
-	@echo "  make macos        -> apply macOS defaults (Finder, Dock, ...)"
-	@echo "  make print-packages -> list packages (one per line, used by CI)"
+help: ## Show available targets
+	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
 
-# install: stow all packages (idempotent)
-install:
+install: ## Stow every package into the target home
 	@test -n "$(PACKAGES)" || { echo "No packages found."; exit 1; }
 	@for pkg in $(PACKAGES); do \
 		echo "→ stow $$pkg"; \
-		$(STOW) --target="$(TARGET)" --verbose $$pkg || exit 1; \
+		$(STOW) --target="$(TARGET)" $(STOW_IGNORE) --verbose $$pkg || exit 1; \
 	done
 	@echo "✅ Packages installed in $(TARGET)"
 
-# unstow: remove all packages
-unstow:
+unstow: ## Remove every symlink
 	@for pkg in $(PACKAGES); do \
 		echo "→ stow -D $$pkg"; \
 		$(STOW) --target="$(TARGET)" --delete $$pkg || exit 1; \
 	done
 	@echo "✅ Packages unstowed"
 
-# refresh: unstow + stow (rebuild all symlinks)
-refresh:
+refresh: ## Unstow + install (rebuild all symlinks)
 	$(MAKE) unstow
 	$(MAKE) install
 
-# adopt: pull existing ~ files into the repo (CAREFUL!)
-adopt:
+adopt: ## Pull existing ~ files into the repo (CAREFUL)
 	@echo "⚠️  WARNING: '--adopt' overwrites repo files with the ones in ~."
 	@echo "    Review with 'git status' and 'git diff' BEFORE committing."
 	@read -p "Continue? (y/N) " -n 1 -r; echo; \
 	if [[ ! $$REPLY =~ ^[Yy]$$ ]]; then echo "Cancelled."; exit 1; fi
 	@for pkg in $(PACKAGES); do \
 		echo "→ stow --adopt $$pkg"; \
-		$(STOW) --target="$(TARGET)" --adopt $$pkg || exit 1; \
+		$(STOW) --target="$(TARGET)" $(STOW_IGNORE) --adopt $$pkg || exit 1; \
 	done
 
-# check: dry-run - validate all packages (creates nothing)
-check:
+check: ## Dry-run: stow --simulate on every package
 	@for pkg in $(PACKAGES); do \
 		echo "→ stow --simulate $$pkg"; \
-		$(STOW) --target="$(TARGET)" --simulate --verbose $$pkg || exit 1; \
+		$(STOW) --target="$(TARGET)" $(STOW_IGNORE) --simulate --verbose $$pkg || exit 1; \
 	done
 	@echo "✅ All packages valid"
 
-# print-packages: print the package list, one per line - used by CI
-print-packages:
+check-home: ## Stow into a throwaway HOME (the real CI check)
+	@STOW="$(STOW)" bin/check-stow.sh
+
+print-packages: ## One package per line (used by check-stow)
 	@printf '%s\n' $(PACKAGES)
 
-# macos: apply macOS system defaults (Finder, Dock, Trackpad, ...)
-# Idempotent; macOS only (the script itself guards on Darwin and no-ops elsewhere).
-macos:
+print-stow-ignore: ## One stow --ignore flag per line (used by check-stow)
+	@for opt in $(STOW_IGNORE); do echo "$$opt"; done
+
+lint: ## shellcheck + zsh -n (same as CI)
+	@for tool in shellcheck zsh; do \
+		command -v $$tool >/dev/null || { echo "Missing $$tool - install it first (brew/apt install $$tool)."; exit 1; }; \
+	done
+	@echo "→ shellcheck"
+	@shellcheck bin/*.sh macos/bin/*.sh
+	@echo "→ zsh -n"
+	@# one file at a time: `zsh -n a b` parses only `a` and treats the rest as $1 $2
+	@for f in zsh/.zshrc zsh/.zshrc.d/*.zsh zprofile/.zprofile; do \
+		zsh -n "$$f" || exit 1; \
+	done
+	@echo "✅ Lint OK"
+
+# Catches a formula dropped from Homebrew (e.g. `tldr`), which breaks
+# `brew bundle` on a fresh machine. Needs macOS or Linuxbrew.
+check-brewfile: ## Check every formula/cask still exists upstream
+	@command -v brew >/dev/null || { echo "❌ brew not found - this check needs macOS or Linuxbrew."; exit 1; }
+	@missing=0; \
+	for f in $$(sed -n 's/^brew "\([^"]*\)".*/\1/p' homebrew/Formulae.brewfile); do \
+		brew info --json=v2 "$$f" >/dev/null 2>&1 \
+			|| { echo "❌ formula not available: $$f"; missing=1; }; \
+	done; \
+	for c in $$(sed -n 's/^cask "\([^"]*\)".*/\1/p' homebrew/Casks.brewfile); do \
+		brew info --cask --json=v2 "$$c" >/dev/null 2>&1 \
+			|| { echo "❌ cask not available: $$c"; missing=1; }; \
+	done; \
+	[ "$$missing" -eq 0 ] || exit 1; \
+	echo "✅ All formulae and casks in the Brewfiles resolve"
+
+# macOS only: the script itself guards on Darwin and no-ops elsewhere.
+macos: ## Apply macOS system defaults
 	@bash macos/bin/set-defaults.sh

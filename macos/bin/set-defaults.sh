@@ -57,9 +57,17 @@ mkdir -p "${HOME}/Pictures/Screenshots"
 defaults write com.apple.screencapture location -string "${HOME}/Pictures/Screenshots"   # screenshots folder
 defaults write com.apple.screencapture type -string "png"                                # screenshot format
 
+# Dialogs
+echo "→ Save/print dialogs"
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true    # expanded save panel
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true   # expanded save panel (v2)
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true       # expanded print panel
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true      # expanded print panel (v2)
+
 # Apply changes
-echo "→ Restarting Finder & Dock..."
+echo "→ Restarting Finder, Dock & SystemUIServer..."
 killall Finder 2>/dev/null || true
 killall Dock 2>/dev/null || true
+killall SystemUIServer 2>/dev/null || true   # needed for the screencapture settings to apply
 
 echo "✅ macOS defaults applied. Log out/in for some changes to take effect."

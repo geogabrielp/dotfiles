@@ -15,6 +15,7 @@ setopt HIST_SAVE_NO_DUPS      # don't save duplicates
 setopt HIST_REDUCE_BLANKS     # strip excess whitespace before saving
 setopt HIST_VERIFY            # confirm before running !/fc history commands
 setopt SHARE_HISTORY          # share history across shells in real time
+setopt HIST_FCNTL_LOCK        # safe concurrent writes (SHARE_HISTORY needs it)
 
 # Shell Behavior
 setopt AUTO_CD                # jump to a directory by typing its path alone

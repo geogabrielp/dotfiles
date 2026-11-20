@@ -19,7 +19,7 @@ fi
 alias zconfig="nano ~/.zshrc"                           # edit main zsh config
 alias zaliases="nano ~/.zshrc.d/50-aliases.zsh"         # edit THIS file
 alias reload="source ~/.zshrc"                          # reload config
-alias e="$EDITOR"                                       # open $EDITOR (nano)
+e() { "${EDITOR:-nano}" "$@"; }                         # open $EDITOR (resolved at run time)
 alias c="clear"                                         # clear screen
 alias q="exit"                                          # quick exit
 
@@ -38,11 +38,12 @@ alias lgit="lazygit"                                    # visual git TUI
 alias ldocker="lazydocker"                              # visual docker TUI
 
 # Files / listing
-alias ll="ls -la"                                       # detailed listing
+# ll = long (no hidden) / la = long + hidden, in both fallback and eza modes
+alias ll="ls -lh"                                       # detailed listing
 alias la="ls -lah"                                      # detailed + hidden
 alias grep="grep --color=auto"                          # colorized grep
 alias mkdir="mkdir -p"                                  # nested dirs
-alias tree="tree -L 2"                                  # directory tree (2 levels)
+command -v tree >/dev/null 2>&1 && alias tree="tree -L 2"  # directory tree (2 levels; lt covers the eza case)
 alias x="extract"                                       # extract archives (fn in 60-functions)
 
 # Search

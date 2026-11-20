@@ -20,7 +20,7 @@ if command -v eza >/dev/null 2>&1; then
     # by eza - do NOT set EZA_COLORS here, it would override the theme.
 
     alias ls='eza'                    # modern ls (icons + colors)
-    alias ll='eza -l'                 # detailed listing
+    alias ll='eza -l'                 # detailed listing (no hidden)
     alias la='eza -la'                # detailed + hidden
     alias lt='eza --tree --level=2'   # directory tree
 fi
@@ -40,9 +40,4 @@ fi
 # ~/.config), so LG_CONFIG_FILE overrides it. On Linux this is a no-op.
 if command -v lazygit >/dev/null 2>&1; then
     export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
-fi
-
-# mole (macOS cleaner/optimizer) - tab completion (binary is `mo`)
-if command -v mo >/dev/null 2>&1; then
-    eval "$(mo completion zsh)"
 fi
