@@ -1,0 +1,20 @@
+# .pre-commit-config.yaml - checks that run before each commit.
+#
+# `pre-commit install` once per clone. Both hooks are `language: system`:
+# they use the binaries from the Brewfile (gitleaks, shellcheck) and the same
+# commands CI runs.
+
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks (staged changes)
+        entry: gitleaks git --pre-commit --redact --staged --verbose
+        language: system
+        pass_filenames: false
+
+      - id: lint
+        name: make lint (shellcheck + zsh -n)
+        entry: make lint
+        language: system
+        pass_filenames: false

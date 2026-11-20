@@ -1,0 +1,31 @@
+# brewfile.yml - weekly check that every formula/cask still exists
+#
+# A formula dropped from Homebrew (like `tldr`) only breaks a *fresh* machine,
+# and the check needs network + brew, so it runs on a schedule instead of on
+# every push. Same command as local: `make check-brewfile`.
+
+name: brewfile
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # `brew info` would otherwise auto-update (minutes) before the first call.
+  HOMEBREW_NO_AUTO_UPDATE: 1
+
+jobs:
+  brewfile:
+    name: brewfile
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: make check-brewfile
+        run: make check-brewfile

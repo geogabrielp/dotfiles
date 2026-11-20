@@ -15,9 +15,6 @@ selection-background = #2d4f73
 # Text color inside the selected region. Off-white helps maintain readability.
 selection-foreground = #f5f7fa
 
-# Disables Ghostty's shell integration cursor feature for a cleaner minimal look.
-shell-integration-features = no-cursor
- 
 # ---------------------------- Color palette ----------------------------
 
 # These colors define the 16 standard terminal colors used by tools, editors,

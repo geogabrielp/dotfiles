@@ -37,10 +37,12 @@ brew "ripgrep"                   # fast grep (rg)
 brew "zoxide"                    # smart cd (alias: z)
 brew "gh"                        # GitHub CLI (PRs, repos, auth)
 brew "git-delta"                 # pretty diffs (git pager + lazygit)
-brew "tldr"                      # community man pages with examples
+brew "tealdeer"                  # tldr: community man pages with examples
 
 # Data & AI
 brew "uv"                        # Python manager (python, venv, deps)
 brew "duckdb"                    # local SQL analytics (Parquet/CSV)
 brew "yq"                        # YAML processor (companion to jq)
 brew "pre-commit"                # git hooks framework (Python projects)
+brew "shellcheck"                # shell linter
+brew "gitleaks"                  # secret scanner (pre-commit hook)

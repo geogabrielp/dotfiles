@@ -35,24 +35,31 @@ sysoptimize() {
 take() { mkdir -p "$1" && cd "$1"; }
 
 # Show public IP + geolocation
+# HTTPS endpoint: the free tier of ip-api.com is HTTP-only, which sent the IP
+# and the query in clear text. ipwho.is speaks HTTP and HTTPS without a key.
 unalias myip 2>/dev/null   # clear stale alias from older versions
 myip() {
-  local url="http://ip-api.com/json/?fields=status,message,query,country,regionName,city,timezone,isp,org,lat,lon"
-  local data
-  data="$(curl -s --max-time 8 "$url")" || { echo "myip: network error" >&2; return 1; }
-  if command -v jq >/dev/null 2>&1; then
-    print -r -- "$data" | jq -r 'if .status == "success" then
-        "IP:        \(.query)",
-        "Location:  \(.city), \(.regionName) - \(.country)",
-        "Timezone:  \(.timezone)",
-        "Coords:    \(.lat), \(.lon)",
-        "ISP:       \(.isp)",
-        "Provider:  \(.org)"
-      else "Error: \(.message)" end'
-  else
+  local url="https://ipwho.is/" data
+  data="$(curl -fsS --max-time 8 "$url")" \
+    || { echo "myip: request failed (network or HTTP error)" >&2; return 1; }
+
+  if ! command -v jq >/dev/null 2>&1; then
     echo "myip: jq not installed; raw response:" >&2
     print -r -- "$data"
+    return 0
   fi
+
+  if [[ "$(print -r -- "$data" | jq -r '.success // false')" != "true" ]]; then
+    echo "myip: $(print -r -- "$data" | jq -r '.message // "unexpected response"')" >&2
+    return 1
+  fi
+
+  print -r -- "$data" | jq -r '"IP:        \(.ip)",
+        "Location:  \(.city), \(.region) - \(.country)",
+        "Timezone:  \(.timezone.id)",
+        "Coords:    \(.latitude), \(.longitude)",
+        "ISP:       \(.connection.isp)",
+        "Provider:  \(.connection.org)"'
 }
 
 # Extract any archive, detecting the format: extract app.tar.gz  (alias: x)

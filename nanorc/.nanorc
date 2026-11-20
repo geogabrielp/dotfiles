@@ -19,16 +19,3 @@ set selectedcolor white,gray            # marked/selected text colors
 set numbercolor gray                    # line-number gutter color
 set keycolor white                      # shortcut-key labels in the help/status bars
 set functioncolor gray                  # function names in the help lines
-
-# Syntax highlighting (cross-platform)
-# Note: Uncomment the appropriate line for your system (macOS, Linux/WSL2, etc.)
-
-# macOS (Homebrew):
-include "/opt/homebrew/Cellar/nano/*/share/nano/*.nanorc"       # Apple Silicon
-# include "/usr/local/share/nano/*.nanorc"                      # Intel
-
-# Linux (Homebrew / Linuxbrew):
-# include "/home/linuxbrew/.linuxbrew/share/nano/*.nanorc"
-
-# Linux (distro packages: apt/dnf/pacman/apk - also macOS system nano):
-# include "/usr/share/nano/*.nanorc"

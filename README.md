@@ -10,129 +10,96 @@
   ![badge](https://shieldcn.dev/badge/Linux.svg?size=xs&theme=zinc&split=true&logo=linux)
 
   <!-- Wide banner -->
-  <img src="https://shieldcn.dev/header/graph.svg?title=.dotfiles&subtitle=Just+a+clean+and+fast+terminal%2C+zero+noise.&size=wide&logo=gnubash&mode=dark&theme=zinc" alt=".dotfiles">
+  <img src="https://shieldcn.dev/header/graph.svg?title=~/.dotfiles&subtitle=Just+a+clean+and+fast+terminal%2C+zero+noise.&size=wide&logo=gnubash&mode=dark&theme=zinc" alt=".dotfiles">
 
   <br>
 
 </div>
 
 My **personal dotfiles**, managed with **GNU Stow + Git**: clean, fast and
-versioned, with the same setup on **macOS** and **Linux/WSL**. Shared publicly
-as a reference, *fork it, adapt it, or just steal the ideas.*
+versioned, with the same setup on **macOS** and **Ubuntu/WSL**. I decided to share publicly as a reference.
 
-> ⚠️ **Use at your own risk.** These are *my personal configurations*, tailored
-> to *my* workflow and machines. They may not suit yours. Review every file
-> before applying anything, **do not install blindly**. Your machine, your
-> responsibility.
+> [!IMPORTANT]
+> **Use at your own risk.** These are *my personal configurations*, tailored
+> to *my* workflow and machines. Review every file before applying anything.
+> Your machine, your responsibility.
 
 ---
 
 ## 📸 Preview
 
-![Terminal preview](docs/preview.png)
+![Terminal preview](docs/preview.webp)
 
 ---
 
 ## 🤔 Why Git + Stow?
 
-Your shell config is one of the longest-lived projects you'll ever work on.
-Versioning it with Git gives you **backup, history, rollback, and the ability to
-reproduce your entire environment on a new machine in minutes.**
-
-- **Git**: the single source of truth. Every change is tracked, reviewable and
-  revertible. No more lost configs or "works on my machine".
-- **GNU Stow**: a tiny, idempotent symlink manager. Each tool lives in its own
-  folder mirroring `$HOME`, and `stow <tool>` links it into place. Files stay in
-  one place (the repo) while behaving as normal dotfiles in `~`.
+Your shell config is the longest-lived project you'll ever own. **Git** gives you
+backup, history and rollback. **Stow** gives you one symlink per tool, with the
+files still living in this repo.
 
 ```bash
-~/.dotfiles/
-└── zsh/
-    └── .zshrc                       # the real, versioned file
-
-$ cd ~/.dotfiles && stow zsh
-
-~/.zshrc → ~/.dotfiles/zsh/.zshrc    # symlink created for you
+~/.zshrc → ~/.dotfiles/zsh/.zshrc    # stow zsh
 ```
 
-**Why not the alternatives?**
-
-| Approach | Drawback |
-| --- | --- |
-| `git` in `$HOME` | `git clean` can wipe your entire home. Never. |
-| Bare repo + `config` alias | Elegant, but needs an alias/function and handles per-machine packages poorly. |
-| Manual `ln -s` scripts | Not idempotent, error-prone. |
-| `rcm` / `homesick` / `vcsh` | Heavy external deps for what Stow does in one command. |
-
-🏁 **Key wins:** symlinks not copies · one command per tool · idempotent · mirrors
-subfolders (e.g. `~/.config/ghostty`) · zero runtime dependencies.
+**Why not the alternatives:** This is the most clean, simple and portable solution I found and other tools like [chezmoi](https://www.chezmoi.io/) or [yadm](https://yadm.io/) are overkill for my needs. Stow is a battle tested, simple and portable tool that does one thing well: **symlink dotfiles**.
 
 ---
 
 ## 🧰 Prerequisites
 
-- **`git`** ([git-scm.com](https://git-scm.com/)): clone and version your dotfiles.
-- **`stow`** ([GNU Stow](https://www.gnu.org/software/stow/)): the symlink manager.
-- **`make`** ([GNU Make](https://www.gnu.org/software/make/)): for the `Makefile` shortcuts (optional but recommended).
-- **Homebrew** ([brew.sh](https://brew.sh/)) (macOS) or **Linuxbrew** ([Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux)) (Linux/WSL): recommended for the
-  `Brewfile` and one-shot bootstrap.
-- **Sheldon** ([sheldon CLI](https://sheldon.cli.rs/Installation.html)): declarative zsh plugin manager (`brew install sheldon`).
+| Requirement | macOS | Ubuntu / WSL |
+| --- | --- | --- |
+| **Xcode Command Line Tools** | `xcode-select --install` | not needed |
+| **Homebrew** / Linuxbrew | [brew.sh](https://brew.sh) | [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux) |
+| `git`, `make` | included with the CLT | `apt install -y git make` |
+| `zsh` | bundled | `apt install -y zsh` |
+| **GNU Stow** | `brew install stow` | `apt install -y stow` |
 
-> 💡 [`bin/bootstrap.sh`](bin/bootstrap.sh) installs all of this automatically — **none of it is strictly manual**.
+> [!NOTE]
+[`bin/bootstrap.sh`](bin/bootstrap.sh) bellow installs every dependency **except the CLT**:
+when they are missing it opens the dialog and stops, so you finish the install
+and run it again.
 
 ---
 
-## 🚀 From-scratch setup
-
-### macOS
-
-```bash
-# 1. Xcode Command Line Tools (git, make, compilers, ...)
-xcode-select --install
-
-# 2. Homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# 3. Clone + install (HTTPS by default — no SSH key needed)
-git clone https://github.com/geogabrielp/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles && make install
-
-# 4. Install CLI tools from the Formulae.brewfile (required)
-brew bundle --file ~/Formulae.brewfile
-
-#    Optional — GUI apps (casks):
-brew bundle --file=~/Casks.brewfile
-```
-
-### Linux / WSL
-
-```bash
-# 1. Build essentials + git + stow (Ubuntu/Debian — adapt to your distro)
-sudo apt update
-sudo apt install -y build-essential git stow
-
-# 2. Clone + install (HTTPS by default)
-git clone https://github.com/geogabrielp/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles && make install
-```
-
-> On Linux, skip the casks: they live in the separate `~/Casks.brewfile` (macOS-only),
-> so `brew bundle --file ~/Formulae.brewfile` installs only CLI tools. If `make` isn't
-> available, `stow -t ~ */` from the repo root does the same.
-
-### One-shot bootstrap (both platforms)
-
-Installs all dependencies, clones the repo and links every package. It's **idempotent**, safe to re-run anytime:
+## 🚀 Install
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/geogabrielp/dotfiles/main/bin/bootstrap.sh | bash
 ```
 
-![Bootstrap preview](docs/bootstrap.png)
+Idempotent, safe to re-run. On Ubuntu/WSL it first installs
+`build-essential procps file curl git zsh stow unzip bsdextrautils` via apt. Then it installs
+Homebrew (also on Linux, so the same Brewfile works), clones the repo, runs
+`brew bundle` (which also brings the CLI tools), links every package and creates
+the `*_local` overrides.
 
-> ⚠️ Piping to `bash` runs the script **as-is** in your shell. Read
-> [`bin/bootstrap.sh`](bin/bootstrap.sh) first — it installs packages and
-> writes files into your `$HOME`.
+> [!WARNING]
+> Piping to `bash` runs the script as-is in your shell, I recommend read
+> [`bin/bootstrap.sh`](bin/bootstrap.sh) first and understand what it does.
+
+### 💪 Doing it by hand
+
+```bash
+# 1. dependencies
+#    macOS:       xcode-select --install  +  Homebrew
+#    Ubuntu/WSL:  sudo apt install -y git zsh make curl stow  +  Linuxbrew
+#                 (https://docs.brew.sh/Homebrew-on-Linux)
+
+# 2. clone
+git clone https://github.com/geogabrielp/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+
+# 3. CLI tools (installs stow + everything else via Homebrew/Linuxbrew)
+brew bundle --file homebrew/Formulae.brewfile
+
+# 4. link the dotfiles (needs stow from step 1 or 3)
+make install
+
+# 5. optional, macOS only: GUI apps
+brew bundle --file homebrew/Casks.brewfile
+```
 
 ### ✅ Verify
 
@@ -141,25 +108,8 @@ ls -la ~/.zshrc ~/.gitconfig
 # lrwxr-xr-x ... ~/.zshrc -> ~/.dotfiles/zsh/.zshrc
 ```
 
-> **Already have configs?** See `make adopt`.
-
-### 🍎 macOS system defaults (Finder, Dock, Trackpad, ...)
-
-Applies my preferred macOS defaults, safe to re-run anytime:
-
-```bash
-make macos
-```
-
-Configures:
-
-- **Finder** (hidden files, extensions, path/status bar, folders on
-top)
-- **Dock** (autohide, no recents, etc.), tap-to-click, fast key
-repeat, screenshot location/format, and expanded save/print panels.
-
-> Lives in [`macos/bin/set-defaults.sh`](macos/bin/set-defaults.sh),
-> **not a stow package**. Edit it to tweak. macOS only, no-op on Linux/WSL.
+If you already have configs in place see `make adopt`: pulls them into the repo (it
+overwrites repo files, so check `git status` right after).
 
 ---
 
@@ -167,32 +117,34 @@ repeat, screenshot location/format, and expanded save/print panels.
 
 | Package | Links into `$HOME` | Purpose |
 | --- | --- | --- |
-| `zsh/` | `~/.zshrc`, `~/.zshrc.d/` | Modular zsh: env, options, plugins, prompt, aliases |
-| `git/` | `~/.gitconfig`, `~/.gitignore_global` | Git config, aliases, HTTPS by default, global ignores |
-| `sheldon/` | `~/.config/sheldon/` | zsh plugins: autosuggestions, completions, syntax-highlighting |
-| `homebrew/` | `~/Formulae.brewfile`, `~/Casks.brewfile` | Homebrew: formulae/CLI (required) + casks (optional) |
-| `ghostty/` | `~/.config/ghostty/` | Ghostty terminal config + theme |
-| `eza/` | `~/.config/eza/` | eza (`ls` replacement) + theme |
-| `lazygit/` | `~/.config/lazygit/` | lazygit terminal UI config |
-| `zprofile/` | `~/.zprofile` | Login-time env (cross-platform Homebrew shellenv) |
-| `nanorc/` | `~/.nanorc` | Nano editor config + syntax highlighting |
+| `zsh/` | `~/.zshrc`, `~/.zshrc.d/` | env, options, plugins, prompt, aliases, functions |
+| `zprofile/` | `~/.zprofile` | login env (Homebrew) |
+| `git/` | `~/.gitconfig`, `~/.gitignore_global` | config, aliases, HTTPS via `gh` |
+| `sheldon/` | `~/.config/sheldon/` | zsh plugins: autosuggestions, completions, highlighting |
+| `homebrew/` | `~/Formulae.brewfile`, `~/Casks.brewfile` | CLI tools (required) + GUI apps (optional) |
+| `ghostty/` | `~/.config/ghostty/` | terminal config + theme |
+| `eza/` | `~/.config/eza/` | `ls` replacement theme |
+| `lazygit/` | `~/.config/lazygit/` | git TUI config |
+| `nanorc/` | `~/.nanorc` | nano config + syntax highlighting |
+| [`macos/`](macos/bin/set-defaults.sh) | This is not stowed | my macOS defaults: see the `macos` package |
 
-**Rule of thumb:** the path of a file inside a package mirrors its path relative
-to `$HOME`.
+New packages are detected automatically: any top-level folder is stowed unless
+it is one of `$(INFRA)` in the [Makefile](Makefile) (`bin`, `docs`, `macos`,
+`.github`). See `make help` for a list of all targets.
 
----
+Machine-specific bits go in `~/.zshrc_local`, `~/.zprofile_local` and
+`~/.gitconfig_local` (created by the bootstrap, git-ignored).
 
-## 📚 Docs
-
-More detail lives in `docs/` to keep this README short:
-
-- [`docs/quick-reference.md`](docs/quick-reference.md): my personal quick reference for zsh, Git/GitHub, Homebrew, Makefile, Stow, `*_local`, tips.
+The checks CI runs are Makefile targets: `make lint` (shellcheck + `zsh -n`),
+`make check-home` (stows into a throwaway HOME) and `make check-brewfile`. The
+`pre-commit install` is once per clone and adds `gitleaks` + `make lint` before each
+commit.
 
 ---
 
 ## ⚖️ License
 
-[MIT](LICENSE)
+[MIT](LICENSE) - fork it, adapt it, or just steal the ideas.
 
 ---
 

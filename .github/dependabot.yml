@@ -1,0 +1,14 @@
+# dependabot.yml - keep the SHA-pinned actions fresh
+#
+# The workflows pin `actions/checkout` by commit SHA (immutable). Without a
+# bot, the pin silently rots; Dependabot bumps the SHA and the `# vX.Y.Z`
+# comment in .github/workflows/ci.yml along with it.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

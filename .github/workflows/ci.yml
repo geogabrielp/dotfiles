@@ -1,0 +1,69 @@
+# ci.yml - Validates the dotfiles repo in CI
+#
+# One job per concern; each one just runs a Makefile target, so the same
+# checks reproduce locally:
+#   stow   make install semantics (temporary HOME, both OSes)
+#   lint   make lint (shellcheck + zsh -n)
+#
+# `make check-brewfile` runs weekly instead - see brewfile.yml.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # `brew install stow` would otherwise auto-update the taps first.
+  HOMEBREW_NO_AUTO_UPDATE: 1
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  stow:
+    name: stow (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install stow
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            brew install stow
+          else
+            sudo apt-get update
+            sudo apt-get install -y stow
+          fi
+
+      - name: Check stow into a throwaway HOME
+        run: make check-home
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install shellcheck + zsh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck zsh
+
+      - name: make lint
+        run: make lint
