@@ -42,7 +42,10 @@ files still living in this repo.
 ~/.zshrc → ~/.dotfiles/zsh/.zshrc    # stow zsh
 ```
 
-**Why not the alternatives:** This is the most clean, simple and portable solution I found and other tools like [chezmoi](https://www.chezmoi.io/) or [yadm](https://yadm.io/) are overkill for my needs. Stow is a battle tested, simple and portable tool that does one thing well: **symlink dotfiles**.
+**Why not the alternatives:** this is the cleanest, simplest and most portable
+solution I found; tools like [chezmoi](https://www.chezmoi.io/) or
+[yadm](https://yadm.io/) are overkill for my needs. Stow is battle-tested and
+does one thing well: **symlink dotfiles**.
 
 ---
 
@@ -57,9 +60,9 @@ files still living in this repo.
 | **GNU Stow** | `brew install stow` | `apt install -y stow` |
 
 > [!NOTE]
-[`bin/bootstrap.sh`](bin/bootstrap.sh) bellow installs every dependency **except the CLT**:
-when they are missing it opens the dialog and stops, so you finish the install
-and run it again.
+> [`bin/bootstrap.sh`](bin/bootstrap.sh) below installs every dependency **except
+> the CLT**: when it is missing the script opens the dialog and stops, so you
+> finish the install and run it again.
 
 ---
 
@@ -76,16 +79,16 @@ Homebrew (also on Linux, so the same Brewfile works), clones the repo, runs
 the `*_local` overrides.
 
 > [!WARNING]
-> Piping to `bash` runs the script as-is in your shell, I recommend read
-> [`bin/bootstrap.sh`](bin/bootstrap.sh) first and understand what it does.
+> Piping to `bash` runs the script as-is in your shell, so I recommend reading
+> [`bin/bootstrap.sh`](bin/bootstrap.sh) first and understanding what it does.
 
 ### 💪 Doing it by hand
 
 ```bash
 # 1. dependencies
 #    macOS:       xcode-select --install  +  Homebrew
-#    Ubuntu/WSL:  sudo apt install -y git zsh make curl stow  +  Linuxbrew
-#                 (https://docs.brew.sh/Homebrew-on-Linux)
+#    Ubuntu/WSL:  sudo apt install -y build-essential procps file curl git zsh stow unzip bsdextrautils
+#                 + Linuxbrew (https://docs.brew.sh/Homebrew-on-Linux)
 
 # 2. clone
 git clone https://github.com/geogabrielp/dotfiles.git ~/.dotfiles
@@ -126,19 +129,27 @@ overwrites repo files, so check `git status` right after).
 | `eza/` | `~/.config/eza/` | `ls` replacement theme |
 | `lazygit/` | `~/.config/lazygit/` | git TUI config |
 | `nanorc/` | `~/.nanorc` | nano config + syntax highlighting |
-| [`macos/`](macos/bin/set-defaults.sh) | This is not stowed | my macOS defaults: see the `macos` package |
+| [`macos/`](macos/bin/set-defaults.sh) | not stowed | my macOS defaults (Finder, Dock, trackpad, screenshots): `make macos`, no-op on Linux |
 
 New packages are detected automatically: any top-level folder is stowed unless
 it is one of `$(INFRA)` in the [Makefile](Makefile) (`bin`, `docs`, `macos`,
 `.github`). See `make help` for a list of all targets.
 
+## 🧩 Overrides
+
 Machine-specific bits go in `~/.zshrc_local`, `~/.zprofile_local` and
 `~/.gitconfig_local` (created by the bootstrap, git-ignored).
 
-The checks CI runs are Makefile targets: `make lint` (shellcheck + `zsh -n`),
-`make check-home` (stows into a throwaway HOME) and `make check-brewfile`. The
-`pre-commit install` is once per clone and adds `gitleaks` + `make lint` before each
-commit.
+## 🧪 CI / pre-commit
+
+Every check is a Makefile target, so CI and your machine run the same thing:
+
+- `make lint` - shellcheck + `zsh -n`
+- `make check-home` - stows every package into a throwaway HOME
+- `make check-brewfile` - every formula/cask still resolves (weekly, in CI)
+
+`pre-commit install` is once per clone and adds `gitleaks` + `make lint` before
+each commit.
 
 ---
 
