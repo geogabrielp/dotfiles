@@ -7,6 +7,9 @@
 #   sheldon add <name>      # add a new plugin
 
 # ORDER MATTERS: Sheldon applies plugins in the order they appear here.
+# `rev` pins each plugin to a commit. To update one: change the `rev` to the new
+# upstream HEAD and run `sheldon lock` (`sheldon update` alone is ignored while
+# a rev is set).
 
 # target shell
 shell = "zsh"
@@ -14,12 +17,15 @@ shell = "zsh"
 # Suggests commands as you type (right arrow → accept suggestion)
 [plugins.autosuggestions]
 github = "zsh-users/zsh-autosuggestions"
+rev = "85919cd1ffa7d2d5412f6d3fe437ebdbeeec4fc5"
 
 # Extra completions for CLI tools (fzf, gh, lazygit, rg...).
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
+rev = "989b23277ab33e8d5e82df6aed936e846db9d8b8"
 apply = ["fpath"]  # add to fpath only (no sourcing)
 
 # Highlights commands as you type (loads last)
 [plugins.syntax-highlighting]
 github = "zsh-users/zsh-syntax-highlighting"
+rev = "e6683f20e5c38d3e5447f45845d04ddda75d0f23"
