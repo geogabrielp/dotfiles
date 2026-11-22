@@ -67,3 +67,27 @@ jobs:
 
       - name: make lint
         run: make lint
+
+  # Same scan as the pre-commit hook, but over the whole history, so a commit
+  # made with --no-verify or from a machine without the hook still gets caught.
+  secrets:
+    name: secrets (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # Pinned on purpose: bump by hand, like the action SHAs above.
+      GITLEAKS_VERSION: 8.30.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # gitleaks reads commits, not just the worktree
+
+      - name: Install gitleaks
+        run: |
+          curl -fsSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+
+      - name: gitleaks git
+        run: gitleaks git --redact --verbose

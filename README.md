@@ -142,14 +142,17 @@ Machine-specific bits go in `~/.zshrc_local`, `~/.zprofile_local` and
 
 ## 🧪 CI / pre-commit
 
-Every check is a Makefile target, so CI and your machine run the same thing:
+Every check is a Makefile target or one command, so CI and your machine run the
+same thing:
 
 - `make lint` - shellcheck + `zsh -n`
 - `make check-home` - stows every package into a throwaway HOME
 - `make check-brewfile` - every formula/cask still resolves (weekly, in CI)
+- `gitleaks git` - full-history secret scan
 
-`pre-commit install` is once per clone and adds `gitleaks` + `make lint` before
-each commit.
+`pre-commit install` is once per clone and adds `gitleaks` (staged changes) +
+`make lint` before each commit; CI repeats the secret scan over the whole
+history, so `--no-verify` is not an escape hatch.
 
 ---
 
