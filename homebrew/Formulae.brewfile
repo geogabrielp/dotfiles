@@ -32,11 +32,14 @@ brew "yq"                        # YAML processor (companion to jq)
 # Git & GitHub
 brew "gh"                        # GitHub CLI (PRs, repos, auth)
 brew "git-delta"                 # pretty diffs (git pager + lazygit)
+brew "git-filter-repo"           # safe history rewriting (filter-branch replacement)
 brew "lazygit"                   # git TUI (alias: lgit)
 
-# Dev / quality - same tools `make lint` and pre-commit use
+# Dev / quality
 brew "gitleaks"                  # secret scanner (pre-commit hook)
 brew "pre-commit"                # git hooks framework
+brew "uv"                        # Python manager (python, venv, deps)
+brew "ruff"                      # Python linter + formatter (fast)
 brew "shellcheck"                # shell linter
 
 # System & maintenance
@@ -48,6 +51,6 @@ brew "mole" if OS.mac?           # cleaner/optimizer (macOS only - used by sysop
 brew "lazydocker"                # docker TUI (alias: ldocker)
 
 # Data & AI
+brew "csvlens"                   # CSV viewer (TUI, no SQL needed)
 brew "databricks/tap/databricks" # Databricks CLI (tap above)
 brew "duckdb"                    # local SQL analytics (Parquet/CSV)
-brew "uv"                        # Python manager (python, venv, deps)
